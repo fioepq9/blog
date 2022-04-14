@@ -111,4 +111,34 @@ type: "tags"
    {%- endif %}
    ```
 
+
+### 添加自定义样式
+
+1. 修改`<blog-dir>/themes/next/_config.yml`文件。
+
+   ```yaml
+   custom_file_path:
+     #head: source/_data/head.njk
+     #header: source/_data/header.njk
+     #sidebar: source/_data/sidebar.njk
+     #postMeta: source/_data/post-meta.njk
+     #postBodyEnd: source/_data/post-body-end.njk
+     #footer: source/_data/footer.njk
+     #bodyEnd: source/_data/body-end.njk
+     #variable: source/_data/variables.styl
+     #mixin: source/_data/mixins.styl
+     style: source/_data/styles.styl
+   ```
+
+2. 新建`<blog-dir>/source/_data/styles.styl`文件。
+
+3. 在`styles.styl`文件中写入 css 样式。
+
+   ```css
+   code {
+       background: #f2f8fe;
+       color: #61aeee;
+   }
+   ```
+
    
