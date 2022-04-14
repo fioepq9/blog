@@ -1,0 +1,12 @@
+﻿.deploy_git
+.github
+node_modules
+public
+scaffolds
+themes
+yarn.lock
+package-lock.json
+package.json
+db.json
+_config.landscape.yml
+.npmignore
