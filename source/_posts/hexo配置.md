@@ -136,9 +136,15 @@ type: "tags"
 
    ```css
    code {
-       background: #f2f8fe;
+       background: 0;
        color: #61aeee;
+       font-size: 1em;
+       margin: .15em;
+   }
+   
+   strong {
+       color: #304ffe;
    }
    ```
-
+   
    
