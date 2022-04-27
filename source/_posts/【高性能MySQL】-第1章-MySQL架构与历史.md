@@ -1,9 +1,10 @@
 ---
-title: 【高性能MySQL】- 第1章 MySQL架构与历史
+title: 【高性能MySQL】- 第1章  MySQL 架构与历史
 date: 2022-04-25 14:40:04
 tags:
   - 阅读笔记
   - MySQL
+  - 高性能MySQL
 categories:
   - 数据库
   - MySQL
