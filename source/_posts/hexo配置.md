@@ -64,6 +64,45 @@ $ git clone https://github.com/next-theme/hexo-theme-next themes/next
        enable: true
        # Available values: default | flat | mac
        style: mac
+       
+   font:
+     enable: true
+   
+     # Uri of fonts host, e.g. https://fonts.googleapis.com (Default).
+     host: https://fonts.googleapis.com
+   
+     # Font options:
+     # `external: true` will load this font family from `host` above.
+     # `family: Times New Roman`. Without any quotes.
+     # `size: x.x`. Use `em` as unit. Default: 1 (16px)
+   
+     # Global font settings used for all elements inside <body>.
+     global:
+       external: true
+       family: LXGW WenKai Mono, Lato, PingFang SC, Microsoft YaHei, sans-serif
+       size:
+   
+     # Font settings for site title (.site-title).
+     title:
+       external: true
+       family: LXGW WenKai Mono, Lato, PingFang SC, Microsoft YaHei, sans-serif
+       size:
+   
+     # Font settings for headlines (<h1> to <h6>).
+     headings:
+       external: true
+       family: LXGW WenKai Mono, Lato, PingFang SC, Microsoft YaHei, sans-serif
+       size:
+   
+     # Font settings for posts (.post-body).
+     posts:
+       external: true
+       family: LXGW WenKai Mono, Lato, PingFang SC, Microsoft YaHei, sans-serif
+   
+     # Font settings for <code> and code blocks.
+     codes:
+       external: true
+       family: LXGW WenKai Mono, consolas, Menlo, monospace, PingFang SC, Microsoft YaHei
    ```
 
 ## hexo添加分类及标签
