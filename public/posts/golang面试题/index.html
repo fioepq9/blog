@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Golang面试题 - fioepq9&#39;s blog</title><meta name="Description" content="Keep it Simple and Stupid"><meta property="og:title" content="Golang面试题" />
+<meta property="og:description" content="内置类型 string、bool、数值类、struct、func、数组、slice、map、chan、interface
+string 的底层实现？ 底层是一个字符串指针加上一个 cap。是一种不可变类型，每次更换内容，实际是更换底层指针。
+slice 的特点 每个 slice 都指向一个底层数组。 使用len()计算 slice 长度的时间复杂度为 O(1)。 使用cap()计算 slice 容量的时间复杂度为 O(1)。 通过函数传递 slice 时，不会拷贝底层数组。 通过append()向切片追加元素时可能触发扩容。 slice 的扩容机制？ 如果原 slice 的容量小于 1024，则新 slice 的容量扩大为原来的 2 倍。 如果原 slice 的容量大于等于 1024，则新 slice 的容量扩大为原来的 1.25 倍。 map 什么时候会触发扩容？ 满足下列两个条件之一：
+负载因子 &gt; 6.5 时，即平均每个 bucket 存储键值对达到 6.5 个以上。 overflow 数量 &gt; $2^{15}$ 时，即 overflow 的数量超过 32768 时。 map 的扩容机制？ 增量扩容(负载因子过大触发) 新建一个新的 buckets，容量为原来的 2 倍。 采用渐进式 rehash，在访问 map 时触发迁移。（每次搬运 2 个键值对） 等量扩容(overflow 数量过高触发) 新建一个新的 buckets，容量跟原来一样。 采用渐进式 rehash，在访问 map 时触发迁移。（每次搬运 2 个键值对） map 的缩容机制？ 现在没有真正的缩容机制，要想实现缩容，只能手动新建一个 map 然后将旧 map 的键值对进行转移。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-10-10T23:36:41+08:00" />
+<meta property="article:modified_time" content="2022-10-10T23:36:41+08:00" /><meta property="og:site_name" content="fioepq9&#39;s blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang面试题"/>
+<meta name="twitter:description" content="内置类型 string、bool、数值类、struct、func、数组、slice、map、chan、interface
+string 的底层实现？ 底层是一个字符串指针加上一个 cap。是一种不可变类型，每次更换内容，实际是更换底层指针。
+slice 的特点 每个 slice 都指向一个底层数组。 使用len()计算 slice 长度的时间复杂度为 O(1)。 使用cap()计算 slice 容量的时间复杂度为 O(1)。 通过函数传递 slice 时，不会拷贝底层数组。 通过append()向切片追加元素时可能触发扩容。 slice 的扩容机制？ 如果原 slice 的容量小于 1024，则新 slice 的容量扩大为原来的 2 倍。 如果原 slice 的容量大于等于 1024，则新 slice 的容量扩大为原来的 1.25 倍。 map 什么时候会触发扩容？ 满足下列两个条件之一：
+负载因子 &gt; 6.5 时，即平均每个 bucket 存储键值对达到 6.5 个以上。 overflow 数量 &gt; $2^{15}$ 时，即 overflow 的数量超过 32768 时。 map 的扩容机制？ 增量扩容(负载因子过大触发) 新建一个新的 buckets，容量为原来的 2 倍。 采用渐进式 rehash，在访问 map 时触发迁移。（每次搬运 2 个键值对） 等量扩容(overflow 数量过高触发) 新建一个新的 buckets，容量跟原来一样。 采用渐进式 rehash，在访问 map 时触发迁移。（每次搬运 2 个键值对） map 的缩容机制？ 现在没有真正的缩容机制，要想实现缩容，只能手动新建一个 map 然后将旧 map 的键值对进行转移。"/>
+<meta name="application-name" content="fioepq9&#39;s blog">
+<meta name="apple-mobile-web-app-title" content="fioepq9&#39;s blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" /><link rel="prev" href="http://example.org/posts/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" /><link rel="next" href="http://example.org/posts/python%E5%B8%B8%E7%94%A8%E5%88%B7%E9%A2%98%E5%87%BD%E6%95%B0/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Golang面试题",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/golang%E9%9D%A2%E8%AF%95%E9%A2%98\/"
+        },"genre": "posts","wordcount":  253 ,
+        "url": "http:\/\/example.org\/posts\/golang%E9%9D%A2%E8%AF%95%E9%A2%98\/","datePublished": "2022-10-10T23:36:41+08:00","dateModified": "2022-10-10T23:36:41+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "fioepq9"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="fioepq9&#39;s blog">fioepq9&#39;s blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="fioepq9&#39;s blog">fioepq9&#39;s blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Golang面试题</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>fioepq9</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-10-10">2022-10-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;253 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#string-的底层实现">string 的底层实现？</a></li>
+    <li><a href="#slice-的特点">slice 的特点</a>
+      <ul>
+        <li><a href="#slice-的扩容机制">slice 的扩容机制？</a></li>
+      </ul>
+    </li>
+    <li><a href="#map-什么时候会触发扩容">map 什么时候会触发扩容？</a>
+      <ul>
+        <li><a href="#map-的扩容机制">map 的扩容机制？</a></li>
+        <li><a href="#map-的缩容机制">map 的缩容机制？</a></li>
+      </ul>
+    </li>
+    <li><a href="#interface-是什么">interface 是什么？</a>
+      <ul>
+        <li><a href="#多态的好处">多态的好处？</a></li>
+        <li><a href="#两个相同接口类型的变量是如何进行比较的">两个相同接口类型的变量是如何进行比较的？</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#go-和-cc的区别">go 和 c/c++的区别？</a></li>
+    <li><a href="#defer-的规则">defer 的规则</a></li>
+    <li><a href="#go-的多值返回是怎么实现的">go 的多值返回是怎么实现的？</a></li>
+    <li><a href="#for-range-遍历-slice-的过程中不断向-slice-进行-append会死循环吗">for range 遍历 slice 的过程中不断向 slice 进行 append，会死循环吗？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#golang-的-gc-算法了解吗">Golang 的 GC 算法了解吗？</a>
+      <ul>
+        <li><a href="#根对象是什么">根对象是什么？</a></li>
+        <li><a href="#没有-stw-会出现什么问题">没有 STW 会出现什么问题？</a></li>
+        <li><a href="#常见的垃圾回收算法">常见的垃圾回收算法</a></li>
+      </ul>
+    </li>
+    <li><a href="#gmp-模型">GMP 模型</a>
+      <ul>
+        <li><a href="#goroutine-调度策略">goroutine 调度策略</a></li>
+      </ul>
+    </li>
+    <li><a href="#内存逃逸">内存逃逸</a>
+      <ul>
+        <li><a href="#逃逸策略">逃逸策略</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="内置类型">内置类型</h1>
+<p><strong>string</strong>、bool、数值类、struct、func、数组、<strong>slice</strong>、<strong>map</strong>、<strong>chan</strong>、<strong>interface</strong></p>
+<h2 id="string-的底层实现">string 的底层实现？</h2>
+<p>底层是一个字符串指针加上一个 cap。是一种不可变类型，每次更换内容，实际是更换底层指针。</p>
+<h2 id="slice-的特点">slice 的特点</h2>
+<ul>
+<li>每个 slice 都指向一个底层数组。</li>
+<li>使用<code>len()</code>计算 slice 长度的时间复杂度为 O(1)。</li>
+<li>使用<code>cap()</code>计算 slice 容量的时间复杂度为 O(1)。</li>
+<li>通过函数传递 slice 时，不会拷贝底层数组。</li>
+<li>通过<code>append()</code>向切片追加元素时可能触发扩容。</li>
+</ul>
+<h3 id="slice-的扩容机制">slice 的扩容机制？</h3>
+<ol>
+<li>如果原 slice 的容量小于 1024，则新 slice 的容量扩大为原来的 2 倍。</li>
+<li>如果原 slice 的容量大于等于 1024，则新 slice 的容量扩大为原来的 1.25 倍。</li>
+</ol>
+<h2 id="map-什么时候会触发扩容">map 什么时候会触发扩容？</h2>
+<p>满足下列两个条件之一：</p>
+<ul>
+<li>负载因子 &gt; 6.5 时，即平均每个 bucket 存储键值对达到 6.5 个以上。</li>
+<li>overflow 数量 &gt; $2^{15}$ 时，即 overflow 的数量超过 32768 时。</li>
+</ul>
+<h3 id="map-的扩容机制">map 的扩容机制？</h3>
+<h4 id="增量扩容负载因子过大触发">增量扩容(负载因子过大触发)</h4>
+<ul>
+<li>新建一个新的 buckets，容量为原来的 2 倍。</li>
+<li>采用渐进式 rehash，在访问 map 时触发迁移。（每次搬运 2 个键值对）</li>
+</ul>
+<h4 id="等量扩容overflow-数量过高触发">等量扩容(overflow 数量过高触发)</h4>
+<ul>
+<li>新建一个新的 buckets，容量跟原来一样。</li>
+<li>采用渐进式 rehash，在访问 map 时触发迁移。（每次搬运 2 个键值对）</li>
+</ul>
+<h3 id="map-的缩容机制">map 的缩容机制？</h3>
+<p>现在没有真正的缩容机制，要想实现缩容，只能手动新建一个 map 然后将旧 map 的键值对进行转移。</p>
+<h2 id="interface-是什么">interface 是什么？</h2>
+<p>interface 是一组方法签名，所有实现了该签名的类都可以赋值给这个接口类型的变量。</p>
+<p>go 使用 interface 实现了「多态」和「泛型」。</p>
+<h3 id="多态的好处">多态的好处？</h3>
+<p>解耦了接口和实现类之间的关系，提高了代码的可维护性和灵活性。</p>
+<h3 id="两个相同接口类型的变量是如何进行比较的">两个相同接口类型的变量是如何进行比较的？</h3>
+<p>会同时比较内部的动态类型和动态值，只有都可比较且都相等的时候，才返回<code>true</code>。</p>
+<h1 id="语言特性">语言特性</h1>
+<h2 id="go-和-cc的区别">go 和 c/c++的区别？</h2>
+<ol>
+<li>go 不支持隐式类型转换，c/c++ 支持。</li>
+<li>go 要求统一的代码风格，并且有 gofmt 这个格式化工具。</li>
+<li>go 通过标识符的首字母是否大写决定可见性，而 c/c++ 通过 private、public 等关键字。</li>
+<li>go 支持多返回值，c/c++ 不支持。</li>
+<li>go 支持匿名函数，c/c++ 只存在类似的 lambda 表达式。</li>
+<li>go 在语言层面支持并发，c/c++ 需要调用外部库。</li>
+<li>go 有自己的垃圾回收器，而 c/c++ 只能手动进行垃圾回收。</li>
+</ol>
+<h2 id="defer-的规则">defer 的规则</h2>
+<ol>
+<li>延迟函数的参数在 defer 语句出现时就已经确定了。</li>
+<li>延迟函数执行按后进先出顺序执行，即先出现的 defer 最后执行。</li>
+<li>延迟函数可能操作使用 defer 语句的函数的具名返回值。</li>
+</ol>
+<h2 id="go-的多值返回是怎么实现的">go 的多值返回是怎么实现的？</h2>
+<p>为了实现多值返回，go 是使用栈空间来返回值的。而常见的 C 语言是通过寄存器来返回值的。go 在调用函数的时候，会在栈中预留返回值的空位，在返回前将具体值赋值。</p>
+<h2 id="for-range-遍历-slice-的过程中不断向-slice-进行-append会死循环吗">for range 遍历 slice 的过程中不断向 slice 进行 append，会死循环吗？</h2>
+<p>不会。<code>for range</code>是 go 的一个语法糖，它在进入循环之前会先获取<code>len(slice)</code>，然后执行<code>len(slice)</code>次数的循环。</p>
+<h1 id="底层实现">底层实现</h1>
+<h2 id="golang-的-gc-算法了解吗">Golang 的 GC 算法了解吗？</h2>
+<p>go 使用的是三色标记法，属于标记清除法。</p>
+<p>这里的三色，对应了垃圾回收过程中对象的三种状态：灰色，代表对象在标记队列中；黑色，代表对象已被标记；白色，代表对象未被标记。</p>
+<p>在垃圾回收开始时，会将根对象标记为灰色，也就是放入标记队列中，然后会从标记队列中取出一个灰色对象，将它引用的对象加入队列中后将它自身变为黑色，直到队列为空。最终黑色对象保留，白色对象被回收。三色标记法实际就是对根对象进行一次 BFS，最后没有遍历到的，即为需要回收垃圾。</p>
+<h3 id="根对象是什么">根对象是什么？</h3>
+<p>全局变量、执行栈中的变量、寄存器中的变量。</p>
+<h3 id="没有-stw-会出现什么问题">没有 STW 会出现什么问题？</h3>
+<p>内存误回收：考虑一个已经扫描完毕的黑色对象，让它引用一个新建的白色对象。最终这个白色对象会被回收。</p>
+<h3 id="常见的垃圾回收算法">常见的垃圾回收算法</h3>
+<ol>
+<li>
+<p>引用计数法：对每个对象维护一个引用计数，当计数为 0 时回收该对象。</p>
+<ul>
+<li>优点：对象可以很快被回收，不会出现内存耗尽或达到某个阈值时才回收。</li>
+<li>缺点：不能很好地处理循环引用，而且实时维护引用计数，空间开销比较大。</li>
+</ul>
+</li>
+<li>
+<p>标记清除法：从根变量开始遍历所有引用的对象并标记，最后回收所有没有被标记的对象。</p>
+<ul>
+<li>优点：可以处理循环引用，并且不用实时维护引用计数，减少了空间上的开销。</li>
+<li>缺点：需要 STW，即暂停程序运行。</li>
+</ul>
+</li>
+<li>
+<p>分代收集法：按照对象生命周期长短划分，生命周期长的放入老年代，而短的放入新生代，不同代有不同的回收算法和回收频率。</p>
+<ul>
+<li>优点：回收性能好。</li>
+<li>缺点：算法复杂。</li>
+</ul>
+</li>
+</ol>
+<h2 id="gmp-模型">GMP 模型</h2>
+<ul>
+<li>G：指 goroutine。</li>
+<li>M：工作线程，在 go 中被称为 Machine。</li>
+<li>P：处理器，是 go 中定义的一个概念，它包含运行 go 代码的必要资源。</li>
+</ul>
+<h3 id="goroutine-调度策略">goroutine 调度策略</h3>
+<ul>
+<li>每个 P 维护一个包含 G 的本地队列，P 周期性地从本地队列头部取出 G 调度到 M 中执行一小段时间后将上下文保存下来，然后将 G 放到本地队列尾部。除了本地队列以外，还有一个全局队列。每个 P 都会周期性地查看全局队列。如果一个 P 的本地队列中的 G 已全部执行完毕，那么会从全局队列中拿一批 G 放入本地队列；如果全局队列中也没有 G，那么它会尝试将其它 P 的本地队列中的 G 偷取一半放入自身的本地队列。</li>
+<li>当 G 进入系统调用时，所属的 M 会释放 P，P 会被其它 M 获取（可能是空闲的 M，如果没有空闲的 M，那么新建一个 M），原本的 M 由于系统调用而阻塞。</li>
+</ul>
+<h2 id="内存逃逸">内存逃逸</h2>
+<p>在一段程序中，每一个函数都会有自己的内存区域存放自己的局部变量、返回地址等，这些内存会由编译器在栈中进行分配，每一个函数都会分配一个栈桢，在函数运行结束后进行销毁，但是有些变量我们想在函数运行结束后仍然使用它，那么就需要把这个变量在堆上分配，这种从&quot;栈&quot;上逃逸到&quot;堆&quot;上的现象就成为内存逃逸。</p>
+<h3 id="逃逸策略">逃逸策略</h3>
+<ol>
+<li>如果对象在函数外部没有引用，则优先放到栈中。（如果需要内存过大，则放到堆中）</li>
+<li>如果对象在函数外部存在引用，则必定放到堆中。</li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-10-10</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="Golang面试题"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/golang%E9%9D%A2%E8%AF%95%E9%A2%98/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="Golang面试题"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="Golang面试题"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="Golang面试题"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" class="prev" rel="prev" title="计算机网络面试题"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>计算机网络面试题</a>
+            <a href="/posts/python%E5%B8%B8%E7%94%A8%E5%88%B7%E9%A2%98%E5%87%BD%E6%95%B0/" class="next" rel="next" title="Python常用刷题函数">Python常用刷题函数<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">fioepq9</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>粤ICP备2022045198号</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

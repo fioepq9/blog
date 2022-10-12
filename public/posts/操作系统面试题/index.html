@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>操作系统面试题 - fioepq9&#39;s blog</title><meta name="Description" content="Keep it Simple and Stupid"><meta property="og:title" content="操作系统面试题" />
+<meta property="og:description" content="控制流 进程、线程、协程之间的区别？ 进程是一个运行中的程序实例，是 CPU 资源调度的基本单位；线程是运行在进程上下文的逻辑控制流，是程序执行的基本单位；协程是用户态的轻量级线程，是线程内部调度的基本单位。线程依赖于进程，一个进程里至少存在一个线程；协程依赖于线程，一个线程里至少存在一个协程。
+进程持有的资源有：进程 ID、页表（提供了一个独立于其它进程的地址空间）、文件描述符表、代码段、数据段、环境变量、寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、内核栈、用户栈；
+线程持有的资源有：线程 ID、寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、内核栈、用户栈；
+协程持有的资源有：寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、用户栈。
+切换开销上：进程 &gt; 线程 &gt; 协程。切换，实质上就是将当前上下文保存，然后取出新的上下文，显然持有的资源越多，切换的开销也就越大；同时，进程切换的时候还会刷新快表，导致快表缓存失效，也就导致新进程刚启动的时候运行速率较慢。进程、线程切换时都要陷入内核态，而协程不需要。进程、线程的切换由操作系统调度，而协程由用户自己调度。
+通信方面上：进程间的通信主要依靠 IPC；而线程、协程间的通信，因为同一进程下的线程、协程共享内存，通信可以直接通过内存进行。
+同一进程中的线程可以共享哪些数据？ 进程 ID、页表、文件描述符表、代码段、数据段、环境变量。
+线程独占哪些资源？ 线程 ID、寄存器中的内容、内核栈、用户栈。
+进程是如何进行切换的？ 进程的切换是由操作系统进行的。操作系统首先会触发一个系统调用，进入到内核态；在内核态中，将当前进程的上下文保存，然后通过进程调度算法从阻塞态的进程队列中取出一个进程，恢复新进程的上下文，然后退出内核态，将控制权移交给新进程。
+进程的状态有哪些？ 五态模型 新建态：进程刚刚被创建，等待系统完成创建进程的所有必要信息。 就绪态：一个进程得到了除控制权以外的所需资源，一旦得到控制权就可以执行。 运行态：一个进程在运行的过程中。 阻塞态：一个进程正在等待某一事件的发生，或者说等待一个信号而暂时停止运行。 终止态：进程已结束运行，回收除进程控制块（PCB）之后的其他资源，并等待其他进程从 PCB 中收集相关信息。 进程调度策略有哪些？ 批处理系统 先来先服务(FCFS) 按照请求的顺序进行调度。这是一种非抢占式的算法，开销小，没有饥饿问题。可能会导致短作业的响应时间过长。
+最短作业优先(SJF) 按估计运行时间最短的顺序进行调度。也是一种非抢占式的算法，吞吐量高。但如果一直有短作业到来，会导致长作业的饥饿。
+最短剩余时间优先(SRTN) 按估计剩余运行时间的顺序进行调度，是最短作业优先的抢占式版本，吞吐量高。跟最短作业优先有一样的问题，可能导致长作业饥饿。
+交互式系统 时间片轮转(Round Robin) 将所有就绪进程按 FCFS 的原则排成队列，用完时间片的进程回到队列尾部。这种算法很好地兼顾了响应时间和处理时间，但时间片的大小选择比较困难。如果时间片过小，进程切换频繁，开销太大；如果时间片太长，实时性就得不到保证。
+优先级调度算法 为所有进程分配一个优先级，按优先级进行调度。为了防止低优先级的进程得不到调度，可以随时间增加等待进程的优先级。
+多级反馈队列调度算法(Multilevel Feedback Queue) 维护多个就绪进程队列，优先级递减，时间片递增。只有优先级更高的队列为空时才会调度低优先级队列中的队列。所有进程一开始都位于最高优先级队列，每次执行完一个时间片，就移动到下个队列。为了避免长作业饥饿问题，可以每隔一段时间，就重新将进程放入最高优先级队列。
+进程间通信的方式（IPC）？ 管道（匿名管道、有名管道） 消息队列 共享内存 信号量 信号 套接字 讲讲你对同步和互斥的理解？ 同步：多个控制流因为合作而使得控制流的执行有一定的先后顺序。 互斥：同一时间只有一个控制流能够执行。 什么是死锁？ 多个控制流之间互相持有所需资源，并等待其它控制流释放资源，导致的循环等待的情况。
+死锁产生的必要条件？ 互斥：一个资源一次只能被一个控制流持有。 占有并等待：一个控制流至少占有一个资源，并在等待另一个被其它控制流占有的资源。 非抢占：已经分配给一个控制流的资源不能被强制性抢占，只能由控制流完成任务后自行释放。 循环等待：若干控制流之间形成一种头尾相接的环形等待资源关系，该环路中的每个控制流等在等待上一个控制流所占有的资源。 死锁的处理方法？ 鸵鸟策略 直接忽略死锁。因为解决死锁的问题的代价很高，当发生死锁时不会对用户造成多大影响，或者发生死锁的概率很低时，可以采用鸵鸟策略。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-10-10T23:32:23+08:00" />
+<meta property="article:modified_time" content="2022-10-10T23:32:23+08:00" /><meta property="og:site_name" content="fioepq9&#39;s blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="操作系统面试题"/>
+<meta name="twitter:description" content="控制流 进程、线程、协程之间的区别？ 进程是一个运行中的程序实例，是 CPU 资源调度的基本单位；线程是运行在进程上下文的逻辑控制流，是程序执行的基本单位；协程是用户态的轻量级线程，是线程内部调度的基本单位。线程依赖于进程，一个进程里至少存在一个线程；协程依赖于线程，一个线程里至少存在一个协程。
+进程持有的资源有：进程 ID、页表（提供了一个独立于其它进程的地址空间）、文件描述符表、代码段、数据段、环境变量、寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、内核栈、用户栈；
+线程持有的资源有：线程 ID、寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、内核栈、用户栈；
+协程持有的资源有：寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、用户栈。
+切换开销上：进程 &gt; 线程 &gt; 协程。切换，实质上就是将当前上下文保存，然后取出新的上下文，显然持有的资源越多，切换的开销也就越大；同时，进程切换的时候还会刷新快表，导致快表缓存失效，也就导致新进程刚启动的时候运行速率较慢。进程、线程切换时都要陷入内核态，而协程不需要。进程、线程的切换由操作系统调度，而协程由用户自己调度。
+通信方面上：进程间的通信主要依靠 IPC；而线程、协程间的通信，因为同一进程下的线程、协程共享内存，通信可以直接通过内存进行。
+同一进程中的线程可以共享哪些数据？ 进程 ID、页表、文件描述符表、代码段、数据段、环境变量。
+线程独占哪些资源？ 线程 ID、寄存器中的内容、内核栈、用户栈。
+进程是如何进行切换的？ 进程的切换是由操作系统进行的。操作系统首先会触发一个系统调用，进入到内核态；在内核态中，将当前进程的上下文保存，然后通过进程调度算法从阻塞态的进程队列中取出一个进程，恢复新进程的上下文，然后退出内核态，将控制权移交给新进程。
+进程的状态有哪些？ 五态模型 新建态：进程刚刚被创建，等待系统完成创建进程的所有必要信息。 就绪态：一个进程得到了除控制权以外的所需资源，一旦得到控制权就可以执行。 运行态：一个进程在运行的过程中。 阻塞态：一个进程正在等待某一事件的发生，或者说等待一个信号而暂时停止运行。 终止态：进程已结束运行，回收除进程控制块（PCB）之后的其他资源，并等待其他进程从 PCB 中收集相关信息。 进程调度策略有哪些？ 批处理系统 先来先服务(FCFS) 按照请求的顺序进行调度。这是一种非抢占式的算法，开销小，没有饥饿问题。可能会导致短作业的响应时间过长。
+最短作业优先(SJF) 按估计运行时间最短的顺序进行调度。也是一种非抢占式的算法，吞吐量高。但如果一直有短作业到来，会导致长作业的饥饿。
+最短剩余时间优先(SRTN) 按估计剩余运行时间的顺序进行调度，是最短作业优先的抢占式版本，吞吐量高。跟最短作业优先有一样的问题，可能导致长作业饥饿。
+交互式系统 时间片轮转(Round Robin) 将所有就绪进程按 FCFS 的原则排成队列，用完时间片的进程回到队列尾部。这种算法很好地兼顾了响应时间和处理时间，但时间片的大小选择比较困难。如果时间片过小，进程切换频繁，开销太大；如果时间片太长，实时性就得不到保证。
+优先级调度算法 为所有进程分配一个优先级，按优先级进行调度。为了防止低优先级的进程得不到调度，可以随时间增加等待进程的优先级。
+多级反馈队列调度算法(Multilevel Feedback Queue) 维护多个就绪进程队列，优先级递减，时间片递增。只有优先级更高的队列为空时才会调度低优先级队列中的队列。所有进程一开始都位于最高优先级队列，每次执行完一个时间片，就移动到下个队列。为了避免长作业饥饿问题，可以每隔一段时间，就重新将进程放入最高优先级队列。
+进程间通信的方式（IPC）？ 管道（匿名管道、有名管道） 消息队列 共享内存 信号量 信号 套接字 讲讲你对同步和互斥的理解？ 同步：多个控制流因为合作而使得控制流的执行有一定的先后顺序。 互斥：同一时间只有一个控制流能够执行。 什么是死锁？ 多个控制流之间互相持有所需资源，并等待其它控制流释放资源，导致的循环等待的情况。
+死锁产生的必要条件？ 互斥：一个资源一次只能被一个控制流持有。 占有并等待：一个控制流至少占有一个资源，并在等待另一个被其它控制流占有的资源。 非抢占：已经分配给一个控制流的资源不能被强制性抢占，只能由控制流完成任务后自行释放。 循环等待：若干控制流之间形成一种头尾相接的环形等待资源关系，该环路中的每个控制流等在等待上一个控制流所占有的资源。 死锁的处理方法？ 鸵鸟策略 直接忽略死锁。因为解决死锁的问题的代价很高，当发生死锁时不会对用户造成多大影响，或者发生死锁的概率很低时，可以采用鸵鸟策略。"/>
+<meta name="application-name" content="fioepq9&#39;s blog">
+<meta name="apple-mobile-web-app-title" content="fioepq9&#39;s blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98/" /><link rel="prev" href="http://example.org/posts/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" /><link rel="next" href="http://example.org/posts/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E9%9D%A2%E8%AF%95%E9%A2%98/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "操作系统面试题",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98\/"
+        },"genre": "posts","wordcount":  489 ,
+        "url": "http:\/\/example.org\/posts\/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98\/","datePublished": "2022-10-10T23:32:23+08:00","dateModified": "2022-10-10T23:32:23+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "fioepq9"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="fioepq9&#39;s blog">fioepq9&#39;s blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="fioepq9&#39;s blog">fioepq9&#39;s blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">操作系统面试题</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>fioepq9</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-10-10">2022-10-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;489 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;3 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#进程线程协程之间的区别">进程、线程、协程之间的区别？</a>
+      <ul>
+        <li><a href="#同一进程中的线程可以共享哪些数据">同一进程中的线程可以共享哪些数据？</a></li>
+        <li><a href="#线程独占哪些资源">线程独占哪些资源？</a></li>
+      </ul>
+    </li>
+    <li><a href="#进程是如何进行切换的">进程是如何进行切换的？</a>
+      <ul>
+        <li><a href="#进程的状态有哪些">进程的状态有哪些？</a></li>
+        <li><a href="#进程调度策略有哪些">进程调度策略有哪些？</a></li>
+        <li><a href="#进程间通信的方式ipc">进程间通信的方式（IPC）？</a></li>
+      </ul>
+    </li>
+    <li><a href="#什么是死锁">什么是死锁？</a>
+      <ul>
+        <li><a href="#死锁产生的必要条件">死锁产生的必要条件？</a></li>
+        <li><a href="#死锁的处理方法">死锁的处理方法？</a></li>
+      </ul>
+    </li>
+    <li><a href="#虚拟内存是什么">虚拟内存是什么？</a>
+      <ul>
+        <li><a href="#虚拟内存的优点">虚拟内存的优点</a></li>
+        <li><a href="#页面置换算法有哪些">页面置换算法有哪些？</a></li>
+        <li><a href="#抖动指的是什么现象">抖动指的是什么现象？</a></li>
+        <li><a href="#碎片指的是什么现象">碎片指的是什么现象？</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#冯诺依曼模型由哪些部分组成分别对应计算机的哪些硬件">冯诺依曼模型由哪些部分组成？分别对应计算机的哪些硬件？</a></li>
+    <li><a href="#32-位和-64-位-cpu-的最主要区别是什么">32 位和 64 位 CPU 的最主要区别是什么？</a></li>
+    <li><a href="#为什么有了内存还需要寄存器">为什么有了内存还需要寄存器？</a>
+      <ul>
+        <li><a href="#常见的寄存器种类有哪些">常见的寄存器种类有哪些？</a></li>
+      </ul>
+    </li>
+    <li><a href="#总线是用来干什么的">总线是用来干什么的？</a>
+      <ul>
+        <li><a href="#总线分为哪几种">总线分为哪几种？</a></li>
+        <li><a href="#cpu-是如何通过总线读写内存数据的">CPU 是如何通过总线读写内存数据的？</a></li>
+      </ul>
+    </li>
+    <li><a href="#cpu-执行程序的过程一个指令周期cpu-做了什么">CPU 执行程序的过程？（一个指令周期，CPU 做了什么？）</a></li>
+    <li><a href="#64-位-cpu-相比-32-位-cpu-的优势在哪64-位-cpu-的计算性能一定比-32-位-cpu-高吗">64 位 CPU 相比 32 位 CPU 的优势在哪？64 位 CPU 的计算性能一定比 32 位 CPU 高吗？</a></li>
+    <li><a href="#你知道软件的-32-位和-64-位之间的区别吗32-位的软件可以运行在-64-位机器上吗反过来呢">你知道软件的 32 位和 64 位之间的区别吗？32 位的软件可以运行在 64 位机器上吗？反过来呢？</a></li>
+    <li><a href="#讲讲你对-l1l2l3-cache-的理解">讲讲你对 L1、L2、L3 Cache 的理解？</a>
+      <ul>
+        <li><a href="#什么时候同步-cache-和内存">什么时候同步 Cache 和内存？</a></li>
+        <li><a href="#如何保证缓存一致性">如何保证缓存一致性？</a></li>
+        <li><a href="#谈谈你对伪共享的理解">谈谈你对伪共享的理解？</a></li>
+      </ul>
+    </li>
+    <li><a href="#linux-中的-task-调度算法">linux 中的 task 调度算法</a>
+      <ul>
+        <li><a href="#cpu-运行队列">CPU 运行队列</a></li>
+      </ul>
+    </li>
+    <li><a href="#什么是软中断">什么是软中断？</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="控制流">控制流</h1>
+<h2 id="进程线程协程之间的区别">进程、线程、协程之间的区别？</h2>
+<ol>
+<li>
+<p>进程是一个运行中的程序实例，是 CPU 资源调度的基本单位；线程是运行在进程上下文的逻辑控制流，是程序执行的基本单位；协程是用户态的轻量级线程，是线程内部调度的基本单位。线程依赖于进程，一个进程里至少存在一个线程；协程依赖于线程，一个线程里至少存在一个协程。</p>
+</li>
+<li>
+<p>进程持有的资源有：进程 ID、页表（提供了一个独立于其它进程的地址空间）、文件描述符表、代码段、数据段、环境变量、寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、内核栈、用户栈；</p>
+<p>线程持有的资源有：线程 ID、寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、内核栈、用户栈；</p>
+<p>协程持有的资源有：寄存器中的内容（通用寄存器、flag 寄存器、程序计数器）、用户栈。</p>
+</li>
+<li>
+<p>切换开销上：进程 &gt; 线程 &gt; 协程。切换，实质上就是将当前上下文保存，然后取出新的上下文，显然持有的资源越多，切换的开销也就越大；同时，进程切换的时候还会刷新快表，导致快表缓存失效，也就导致新进程刚启动的时候运行速率较慢。进程、线程切换时都要陷入内核态，而协程不需要。进程、线程的切换由操作系统调度，而协程由用户自己调度。</p>
+</li>
+<li>
+<p>通信方面上：进程间的通信主要依靠 IPC；而线程、协程间的通信，因为同一进程下的线程、协程共享内存，通信可以直接通过内存进行。</p>
+</li>
+</ol>
+<h3 id="同一进程中的线程可以共享哪些数据">同一进程中的线程可以共享哪些数据？</h3>
+<p>进程 ID、页表、文件描述符表、代码段、数据段、环境变量。</p>
+<h3 id="线程独占哪些资源">线程独占哪些资源？</h3>
+<p>线程 ID、寄存器中的内容、内核栈、用户栈。</p>
+<h2 id="进程是如何进行切换的">进程是如何进行切换的？</h2>
+<p>进程的切换是由操作系统进行的。操作系统首先会触发一个系统调用，进入到内核态；在内核态中，将当前进程的上下文保存，然后通过进程调度算法从阻塞态的进程队列中取出一个进程，恢复新进程的上下文，然后退出内核态，将控制权移交给新进程。</p>
+<h3 id="进程的状态有哪些">进程的状态有哪些？</h3>
+<h4 id="五态模型">五态模型</h4>
+<ul>
+<li>新建态：进程刚刚被创建，等待系统完成创建进程的所有必要信息。</li>
+<li>就绪态：一个进程得到了除控制权以外的所需资源，一旦得到控制权就可以执行。</li>
+<li>运行态：一个进程在运行的过程中。</li>
+<li>阻塞态：一个进程正在等待某一事件的发生，或者说等待一个信号而暂时停止运行。</li>
+<li>终止态：进程已结束运行，回收除进程控制块（PCB）之后的其他资源，并等待其他进程从 PCB 中收集相关信息。</li>
+</ul>
+<h3 id="进程调度策略有哪些">进程调度策略有哪些？</h3>
+<h4 id="批处理系统">批处理系统</h4>
+<ol>
+<li>先来先服务(FCFS)</li>
+</ol>
+<p>按照请求的顺序进行调度。这是一种非抢占式的算法，开销小，没有饥饿问题。可能会导致短作业的响应时间过长。</p>
+<ol start="2">
+<li>最短作业优先(SJF)</li>
+</ol>
+<p>按估计运行时间最短的顺序进行调度。也是一种非抢占式的算法，吞吐量高。但如果一直有短作业到来，会导致长作业的饥饿。</p>
+<ol start="3">
+<li>最短剩余时间优先(SRTN)</li>
+</ol>
+<p>按估计剩余运行时间的顺序进行调度，是最短作业优先的抢占式版本，吞吐量高。跟最短作业优先有一样的问题，可能导致长作业饥饿。</p>
+<h4 id="交互式系统">交互式系统</h4>
+<ol>
+<li>时间片轮转(Round Robin)</li>
+</ol>
+<p>将所有就绪进程按 FCFS 的原则排成队列，用完时间片的进程回到队列尾部。这种算法很好地兼顾了响应时间和处理时间，但时间片的大小选择比较困难。如果时间片过小，进程切换频繁，开销太大；如果时间片太长，实时性就得不到保证。</p>
+<ol start="2">
+<li>优先级调度算法</li>
+</ol>
+<p>为所有进程分配一个优先级，按优先级进行调度。为了防止低优先级的进程得不到调度，可以随时间增加等待进程的优先级。</p>
+<ol start="3">
+<li>多级反馈队列调度算法(Multilevel Feedback Queue)</li>
+</ol>
+<p>维护多个就绪进程队列，优先级递减，时间片递增。只有优先级更高的队列为空时才会调度低优先级队列中的队列。所有进程一开始都位于最高优先级队列，每次执行完一个时间片，就移动到下个队列。为了避免长作业饥饿问题，可以每隔一段时间，就重新将进程放入最高优先级队列。</p>
+<h3 id="进程间通信的方式ipc">进程间通信的方式（IPC）？</h3>
+<ol>
+<li>管道（匿名管道、有名管道）</li>
+<li>消息队列</li>
+<li>共享内存</li>
+<li>信号量</li>
+<li>信号</li>
+<li>套接字</li>
+</ol>
+<h4 id="讲讲你对同步和互斥的理解">讲讲你对同步和互斥的理解？</h4>
+<ul>
+<li>同步：多个控制流因为合作而使得控制流的执行有一定的先后顺序。</li>
+<li>互斥：同一时间只有一个控制流能够执行。</li>
+</ul>
+<h2 id="什么是死锁">什么是死锁？</h2>
+<p>多个控制流之间互相持有所需资源，并等待其它控制流释放资源，导致的循环等待的情况。</p>
+<h3 id="死锁产生的必要条件">死锁产生的必要条件？</h3>
+<ul>
+<li>互斥：一个资源一次只能被一个控制流持有。</li>
+<li>占有并等待：一个控制流至少占有一个资源，并在等待另一个被其它控制流占有的资源。</li>
+<li>非抢占：已经分配给一个控制流的资源不能被强制性抢占，只能由控制流完成任务后自行释放。</li>
+<li>循环等待：若干控制流之间形成一种头尾相接的环形等待资源关系，该环路中的每个控制流等在等待上一个控制流所占有的资源。</li>
+</ul>
+<h3 id="死锁的处理方法">死锁的处理方法？</h3>
+<h4 id="鸵鸟策略">鸵鸟策略</h4>
+<p>直接忽略死锁。因为解决死锁的问题的代价很高，当发生死锁时不会对用户造成多大影响，或者发生死锁的概率很低时，可以采用鸵鸟策略。</p>
+<h4 id="死锁预防">死锁预防</h4>
+<p>基本思想是破坏形成死锁的四个必要条件。</p>
+<ul>
+<li>破坏互斥条件：允许某些资源同时被多个控制流持有。这个做法的问题是有些资源本身不具有这种属性，实用性有限。</li>
+<li>破坏占有并等待条件：实现资源预先分配策略，即一个控制执行任务之前，必须一次性申请所需资源，否则不允许。这个做法的问题是很多时候我们无法在执行前得知一个控制流具体需要哪些资源。同时这个也会降低资源的利用率，减少了并发量。</li>
+<li>破坏非抢占条件：允许控制流强行抢占其它控制流占有的资源。抢占会带来很多额外的开销。</li>
+<li>破坏循环等待条件：对资源进行编号，所有控制流对资源的申请必须按序提出，只有占有了低级资源的控制流才能申请高级资源。这样避免了占有高级资源的控制流再去申请低级资源，破坏了循环环路。</li>
+</ul>
+<h4 id="死锁避免">死锁避免</h4>
+<p>动态检查资源分配状态，确保系统处于安全状态，只有处于安全状态时才会进行资源的分配。安全状态指的是：存在某种对控制流的资源分配顺序，使得每一个控制流都能运行。</p>
+<h4 id="死锁解除">死锁解除</h4>
+<p>当检测到死锁的时候，让某些控制流回滚到足以解除死锁的地步，控制流回滚时释放资源。这要求系统维护控制流的历史信息，并设置回滚点。</p>
+<h2 id="虚拟内存是什么">虚拟内存是什么？</h2>
+<p>虚拟内存是一种对真实物理内存的抽象，它将物理内存看成是磁盘的缓存，为每个进程提供了独立的地址空间，保护了每个进程的地址空间不被其他进程破坏。</p>
+<p>将一个进程内的虚拟地址转化成对应的物理地址，叫做地址翻译。计算机的地址翻译是软硬件结合的，os 负责为每个进程维护页表，硬件 MMU 通过快表、页表执行地址翻译。MMU 如果从页表中发现该页不在内存中，就会触发缺页异常，根据页面置换算法从已缓存的页中选择一页进行置换（如果牺牲页被修改过，就复制其回磁盘）。</p>
+<h3 id="虚拟内存的优点">虚拟内存的优点</h3>
+<ul>
+<li>每个进程拥有独立的地址空间，这简化了内存管理，让进程间互不影响（通过在页表中设置许可位，提供访问控制）。</li>
+<li>将物理内存扩充成了更大的逻辑内存。</li>
+<li>通过将相应的虚拟页映射到同一物理页，可以实现共享库代码段。</li>
+</ul>
+<h3 id="页面置换算法有哪些">页面置换算法有哪些？</h3>
+<ol>
+<li>【无法实现】最佳置换法（OPT）</li>
+</ol>
+<p>每次选择淘汰的页面是以后永不使用，或者在最长时间内不再被访问的页面。</p>
+<ol start="2">
+<li>先进先出置换法（FIFO）</li>
+</ol>
+<p>每次选择淘汰的页面是最早进入内存的页面。</p>
+<ol start="3">
+<li>最近最久未使用置换法（LRU）</li>
+</ol>
+<p>每次选择淘汰的页面是最近最久未使用的页面。</p>
+<ol start="4">
+<li>时钟置换法（Clock）</li>
+</ol>
+<p>是 LRU 算法的近似实现。维护位组成的循环队列，每个位代表一个页。当某页被访问时，其访问位置为 1。当需要淘汰一个页面时，只需检查页的访问位。如果是 0，就选择该页换出；如果是 1，则将它置为 0，暂不换出，继续检查下一个页面。</p>
+<h3 id="抖动指的是什么现象">抖动指的是什么现象？</h3>
+<p>指页面不断地换进换出，导致 CPU 利用率低下。通常成因是经常使用的内存大小超出了物理内存大小。</p>
+<h3 id="碎片指的是什么现象">碎片指的是什么现象？</h3>
+<ul>
+<li>内部碎片：在一个已分配块比有效载荷大时发生的。也即分配了但不会被使用的空间。</li>
+<li>外部碎片：当空闲内存合计起来足够满足一个分配请求，但是没有一个单独的空闲块足够大可以来处理这个请求时发生的。</li>
+</ul>
+<h1 id="硬件结构">硬件结构</h1>
+<h2 id="冯诺依曼模型由哪些部分组成分别对应计算机的哪些硬件">冯诺依曼模型由哪些部分组成？分别对应计算机的哪些硬件？</h2>
+<p>「运算器」、「控制器」、「存储器」、「输入设备」、「输出设备」。</p>
+<ul>
+<li>
+<p>「运算器」对应 CPU 中的逻辑运算单元</p>
+</li>
+<li>
+<p>「控制器」对应 CPU 中的控制单元。</p>
+</li>
+<li>
+<p>「存储器」对应内存、磁盘、CPU 中的寄存器、L1/L2/L3 Cache 等存储设备。</p>
+</li>
+<li>
+<p>「输入设备」对应键盘、鼠标等。</p>
+</li>
+<li>
+<p>「输出设备」对应显示器等。</p>
+</li>
+</ul>
+<h2 id="32-位和-64-位-cpu-的最主要区别是什么">32 位和 64 位 CPU 的最主要区别是什么？</h2>
+<p>一次能计算多少字节的数据。</p>
+<ul>
+<li>32 位 CPU 一次可以计算 4 个字节。</li>
+<li>64 位 CPU 一次可以计算 8 个字节。</li>
+</ul>
+<h2 id="为什么有了内存还需要寄存器">为什么有了内存还需要寄存器？</h2>
+<p>内存离 CPU 的物理距离太远了，而寄存器在 CPU 中，且紧挨着 CPU 的控制单元和逻辑运算单元，运算速度更快。</p>
+<h3 id="常见的寄存器种类有哪些">常见的寄存器种类有哪些？</h3>
+<ul>
+<li>「通用寄存器」，用来存放需要进行运算的数据。</li>
+<li>「程序计数器」，用来存储 CPU 将要执行的下一条指令「所在的内存地址」。</li>
+<li>「指令寄存器」，用来存放当前即将执行的指令，在指令执行完成之前，都存储在这里。</li>
+</ul>
+<h2 id="总线是用来干什么的">总线是用来干什么的？</h2>
+<p>总线用于 CPU 和内存以及其他设备之间的通信。</p>
+<h3 id="总线分为哪几种">总线分为哪几种？</h3>
+<ul>
+<li>「地址总线」，用于指定 CPU 将要操作的内存地址。</li>
+<li>「数据总线」，用于读写内存的数据。</li>
+<li>「控制总线」，用于发送和接收信号，比如中断、设备复位等信号。CPU 收到信号后进行响应时，也需要控制总线。</li>
+</ul>
+<h3 id="cpu-是如何通过总线读写内存数据的">CPU 是如何通过总线读写内存数据的？</h3>
+<ol>
+<li>首先要通过「地址总线」来指定内存的地址。</li>
+<li>再通过「数据总线」来传输数据。</li>
+</ol>
+<h2 id="cpu-执行程序的过程一个指令周期cpu-做了什么">CPU 执行程序的过程？（一个指令周期，CPU 做了什么？）</h2>
+<ol>
+<li>CPU 读取「程序计数器」的值（即读取下一条指令的内存地址），然后 CPU 的「控制单元」操作「地址总线」指定需要访问的内存地址，接着通知内存设备准备数据，数据准备好后通过「数据总线」将指令传输给 CPU，CPU 收到数据后存入「指令寄存器」。</li>
+<li>CPU 分析「指令寄存器」中的指令，确定指令的类型和参数：如果是计算类型的指令，就将指令交由「逻辑运算单元」运算；如果是存储类型的指令，则交由「控制单元」执行。</li>
+<li>CPU 执行完指令后，「程序计数器」的值自增，执行下一条指令。自增的值的大小，由 CPU 的位宽决定，32 位 CPU 的指令需要 4 个字节存放，因此自增 4；而 64 位 CPU 则自增 8。</li>
+</ol>
+<h2 id="64-位-cpu-相比-32-位-cpu-的优势在哪64-位-cpu-的计算性能一定比-32-位-cpu-高吗">64 位 CPU 相比 32 位 CPU 的优势在哪？64 位 CPU 的计算性能一定比 32 位 CPU 高吗？</h2>
+<p>64 位 CPU 相比 32 位 CPU 的优势主要体现在两个方面：</p>
+<ol>
+<li>64 位 CPU 可以一次计算 32 位~64 位的数字，而 32 位 CPU 如果要计算超过 32 位的数字，就需要分多步骤进行计算，效率就没那么高。但是大部分应用程序很少会使用超过 32 位的数字。只有运算大数字的时候，64 位 CPU 的优势才能体现出来，否则和 32 位 CPU 的计算性能相差不大。</li>
+<li>64 位 CPU 可以寻址更大的内存空间。32 位 CPU 最大的寻址地址是 4G=$2^{32}$，而 64 位 CPU 的最大寻址地址是 4E=$2^{64}$。</li>
+</ol>
+<h2 id="你知道软件的-32-位和-64-位之间的区别吗32-位的软件可以运行在-64-位机器上吗反过来呢">你知道软件的 32 位和 64 位之间的区别吗？32 位的软件可以运行在 64 位机器上吗？反过来呢？</h2>
+<p>64 位和 32 位的软件，实际上代表指令是 64 位还是 32 位的。</p>
+<p>如果想要 32 位指令在 64 位机器上执行，只需要一套兼容机制，就可以做到了。</p>
+<p>但如果想要 64 位指令在 32 位机器上执行，就比较困难了，因为 32 位的寄存器存不下 64 位的指令。</p>
+<h2 id="讲讲你对-l1l2l3-cache-的理解">讲讲你对 L1、L2、L3 Cache 的理解？</h2>
+<p>L1 Cache 通常分为「数据缓存」和「指令缓存」，两者大小通常一致。</p>
+<p>L1 Cache 和 L2 Cache 都是每个 CPU 核心独有的，而 L3 Cache 是多个 CPU 核心共享的。</p>
+<p>CPU 访问 L1 Cache 需要 2-4 个时钟周期，访问 L2 Cache 需要 10-20 个时钟周期，访问 L3 Cache 需要 20-60 个时钟周期，访问寄存器一般少于一个时钟周期，访问内存需要 200-300 个时钟周期。</p>
+<h3 id="什么时候同步-cache-和内存">什么时候同步 Cache 和内存？</h3>
+<h4 id="写直达write-through把数据同时写入内存和-cache-中">写直达（Write Through）：把数据同时写入内存和 Cache 中。</h4>
+<ul>
+<li>
+<p>如果数据已经在 Cache 中，先更新 Cache，再更新内存。</p>
+</li>
+<li>
+<p>如果数据没有在 Cache 中，直接更新内存。</p>
+</li>
+</ul>
+<p>问题：无论数据在不在 Cache 里面，每次写操作都会操作内存，影响性能。</p>
+<h4 id="写回write-back当发生写操作时仅仅更新缓存只有当缓存失效时才更新内存">写回（Write Back）：当发生写操作时，仅仅更新缓存，只有当缓存失效时，才更新内存。</h4>
+<ul>
+<li>如果数据在缓存中，则更新缓存并标记。</li>
+<li>如果数据不在缓存中，并且对应缓存区域已被标记，则将缓存区域中的数据写回到内存中，再写入缓存。</li>
+</ul>
+<p>如果我们大量操作都命中缓存，那么大部分时间里 CPU 都不需要读写内存，自然性能比写直达高很多。</p>
+<h3 id="如何保证缓存一致性">如何保证缓存一致性？</h3>
+<ol>
+<li>写传播（Write Propagation）：某个 CPU 核心里的 Cache 数据更新时，必须要传播到其他核心的 Cache。</li>
+<li>事务的串行化（Transaction Serialization）：某个 CPU 核心里对数据的操作顺序，必须在其他核心看起来顺序是一样的。</li>
+</ol>
+<h4 id="总线嗅探">总线嗅探</h4>
+<p>当 CPU 核进行写操作时，通过总线把这个事件广播给其他所有核心，每个 CPU 核心都会监听总线上的广播事件，并检查是否有相同的数据在自己的 L1/L2 Cache 中，如果存在，则此时也更新 L1/L2 Cache。</p>
+<p>问题：只保证了更新事件能被其他 CPU 核心知晓，并不能保证事务串行化。</p>
+<h4 id="mesi-协议">MESI 协议</h4>
+<p>Modified（已修改）、Exclusive（独占）、Shared（共享）、Invalidated（已失效）。</p>
+<p>使用上述的四个状态标记 Cache 中的数据。</p>
+<p>Modifed：表示 Cache 中的数据已经修改，但还没有同步到内存中。</p>
+<p>Exclusive：Cache 和内存是一致的，此时数据可以自由写入，而不用通知其他 CPU 核心。更新数据的同时标记为 Modified。</p>
+<p>Shared：Cache 和内存是一致的，数据写入的时候，要先广播一个信号，要求其他核心中的对应 Cache 标记为 Invalidated，然后再更新当前 Cache 的数据，更新同时标记为 Modified。</p>
+<h3 id="谈谈你对伪共享的理解">谈谈你对伪共享的理解？</h3>
+<p>伪共享指的是多个 CPU 核心同时读写一个 Cache Line 的不同变量时，而导致的 CPU Cache 失效的现象。</p>
+<h4 id="避免伪共享的方法">避免伪共享的方法</h4>
+<ul>
+<li>在 Linux 内核中存在<code>__cacheline_aligned_in_smp</code>宏定义，采用这个宏定义可以使得变量在 Cache Line 中是对齐的。</li>
+</ul>
+<h2 id="linux-中的-task-调度算法">linux 中的 task 调度算法</h2>
+<p>在 linux 中，根据任务的优先级以及响应要求，将 task 主要分为两种，其中优先级的数值越小，优先级越高。</p>
+<ul>
+<li>实时任务（优先级：0~99），对系统的响应时间要求很高，即要尽可能快地执行实时任务。</li>
+<li>普通任务（优先级：100~139），响应时间没有很高的要求。</li>
+</ul>
+<p>linux 为了保障高优先级的任务能够尽可能早地被执行，分为 3 种调度类：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/14/20220414-221737.png"
+        data-srcset="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/14/20220414-221737.png, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/14/20220414-221737.png 1.5x, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/14/20220414-221737.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/14/20220414-221737.png"
+        title="调度类" /></p>
+<p>Deadline、Realtime 这两个调度类，应用于实时任务，调度策略如下：</p>
+<ul>
+<li>DEADLINE：安装 deadline 进行调度，距离当前时间点最近 deadline 的任务会被优先调度。</li>
+<li>FIFO：对于相同优先级的任务，按照先来先服务原则，但是优先级更高的任务可以抢占低优先级的任务。</li>
+<li>RR：对于相同优先级的任务，轮流运行一个时间片，但是优先级更高的任务可以抢占低优先级的任务。</li>
+</ul>
+<p>Fair 调度类应用于普通任务，有两种调度策略：</p>
+<ul>
+<li>NORMAL：普通任务使用的调度策略。</li>
+<li>BATCH：后台任务的调度策略，不会和终端交互，因此在不影响其他需要交互的任务的前提下，可以适当降低它的优先级。</li>
+<li>CFS（完全公平调度）：为每个任务维护一个虚拟运行时间，优先选择虚拟运行时间少的任务。虚拟运行时间 = 时间运行时间 * NICE_0_LOAD / 权重。</li>
+</ul>
+<h3 id="cpu-运行队列">CPU 运行队列</h3>
+<p>每个 CPU 都有自己的运行队列，Deadline 运行队列 dl_rq，实时任务运行队列 rt_rq，CFS 运行队列 cfs_rq，其中 cfs_rq 的数据结构为红黑树，最左结点即为下次被调度的任务。</p>
+<p>CPU 选择任务时，会按 Deadline &gt; Realtime &gt; Fair 的优先级顺序进行选择，因此实时任务总是会比普通任务优先被执行。</p>
+<h2 id="什么是软中断">什么是软中断？</h2>
+<p>linux 为了解决中断处理程序执行过长和中断丢失的问题，将中断过程分成了两个阶段，分别是「硬中断」和「软中断」。</p>
+<ul>
+<li>「硬中断」用来快速处理中断，一般会暂时关闭中断请求，主要负责处理跟硬件紧密相关或者时间敏感的事情。「硬中断」会打断 CPU 正在执行的任务，然后立即执行中断处理程序。</li>
+<li>「软中断」用来延迟处理「硬中断」未完成的工作，一般以「内核线程」的形式运行。每一个 CPU 核心都对应一个软中断内核线程，名字通常为<code>ksoftirqd/「CPU编号」</code>。</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-10-10</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="操作系统面试题"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="操作系统面试题"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="操作系统面试题"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="操作系统面试题"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" class="prev" rel="prev" title="二分查找"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>二分查找</a>
+            <a href="/posts/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E9%9D%A2%E8%AF%95%E9%A2%98/" class="next" rel="next" title="数据结构与算法面试题">数据结构与算法面试题<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">fioepq9</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>粤ICP备2022045198号</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>计算机网络面试题 - fioepq9&#39;s blog</title><meta name="Description" content="Keep it Simple and Stupid"><meta property="og:title" content="计算机网络面试题" />
+<meta property="og:description" content="计算机网络体系结构 应用层：HTTP、HTTPS、DNS HTTP 是什么？ HTTP，即「超文本传输协议」，是一个在计算机世界里专门在两点之间传输文字、图片、音频、视频等超文本数据的约定和规范。
+超文本的最关键点是什么？ 最关键的是「超链接」，它能够从一个超文本跳转到另一个超文本。
+HTTP 的请求报文包含什么？ 请求报文是由请求方法、请求 URI、协议版本、可选的请求首部字段和内容实体构成的。
+GET 和 POST 有什么区别？ 根据 RFC 规范，GET 的语义是从服务器获取指定的资源，POST 的语义是根据请求负荷对指定资源做出处理。 GET 请求的参数一般写在 URL 中，由于 URL 规定只能支持 ASCII 字符，所以 GET 的参数也只允许 ASCII 字符，同时浏览器一般会对 URL 的长度有限制。POST 请求的参数一般写在报文的 body 中，body 中的数据可以是任意格式的，只要客户端与服务端协商好即可，而且浏览器不对 body 大小做限制。 GET 方法是安全且幂等的，安全指的是不会修改服务器上的资源，幂等指的是多次执行相同的操作得到的结果也是相同的。POST 方法一般用于新增或提交数据，会修改服务器上的资源，所以是不安全的，且多次提交数据就会创建多个资源，所以不是幂等的。 可以对 GET 请求的数据做缓存，而且在浏览器中 GET 请求可以保存为书签。浏览器一般不会缓存 POST 请求，也不能将 POST 请求保存为书签。 HTTP 的响应报文包含什么？ 响应报文由协议版本、状态码、用以解释状态码的原因短语、可选的响应首部字段以及实体主体构成。
+HTTP 常见的状态码有哪些？ 1xx类状态码属于提示信息，是协议处理中的一种中间状态，实际使用较少。
+2xx类状态码表示请求成功被处理。
+「200 OK」：表示一切正常。 「204 No Content」：与 200 OK 基本相同，但返回的响应报文中没有 body。 「206 Partial Content」：通常应用于 HTTP 分块下载或断点续传，表示响应返回的 body 数据是资源的一部分。 3xx类状态码表示请求的资源发生了变动，需要使用新的 URL 进行访问。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fioepq9.cn/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-10-10T23:34:56+08:00" />
+<meta property="article:modified_time" content="2022-10-10T23:34:56+08:00" /><meta property="og:site_name" content="fioepq9&#39;s blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="计算机网络面试题"/>
+<meta name="twitter:description" content="计算机网络体系结构 应用层：HTTP、HTTPS、DNS HTTP 是什么？ HTTP，即「超文本传输协议」，是一个在计算机世界里专门在两点之间传输文字、图片、音频、视频等超文本数据的约定和规范。
+超文本的最关键点是什么？ 最关键的是「超链接」，它能够从一个超文本跳转到另一个超文本。
+HTTP 的请求报文包含什么？ 请求报文是由请求方法、请求 URI、协议版本、可选的请求首部字段和内容实体构成的。
+GET 和 POST 有什么区别？ 根据 RFC 规范，GET 的语义是从服务器获取指定的资源，POST 的语义是根据请求负荷对指定资源做出处理。 GET 请求的参数一般写在 URL 中，由于 URL 规定只能支持 ASCII 字符，所以 GET 的参数也只允许 ASCII 字符，同时浏览器一般会对 URL 的长度有限制。POST 请求的参数一般写在报文的 body 中，body 中的数据可以是任意格式的，只要客户端与服务端协商好即可，而且浏览器不对 body 大小做限制。 GET 方法是安全且幂等的，安全指的是不会修改服务器上的资源，幂等指的是多次执行相同的操作得到的结果也是相同的。POST 方法一般用于新增或提交数据，会修改服务器上的资源，所以是不安全的，且多次提交数据就会创建多个资源，所以不是幂等的。 可以对 GET 请求的数据做缓存，而且在浏览器中 GET 请求可以保存为书签。浏览器一般不会缓存 POST 请求，也不能将 POST 请求保存为书签。 HTTP 的响应报文包含什么？ 响应报文由协议版本、状态码、用以解释状态码的原因短语、可选的响应首部字段以及实体主体构成。
+HTTP 常见的状态码有哪些？ 1xx类状态码属于提示信息，是协议处理中的一种中间状态，实际使用较少。
+2xx类状态码表示请求成功被处理。
+「200 OK」：表示一切正常。 「204 No Content」：与 200 OK 基本相同，但返回的响应报文中没有 body。 「206 Partial Content」：通常应用于 HTTP 分块下载或断点续传，表示响应返回的 body 数据是资源的一部分。 3xx类状态码表示请求的资源发生了变动，需要使用新的 URL 进行访问。"/>
+<meta name="application-name" content="fioepq9&#39;s blog">
+<meta name="apple-mobile-web-app-title" content="fioepq9&#39;s blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://fioepq9.cn/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" /><link rel="prev" href="https://fioepq9.cn/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E9%9D%A2%E8%AF%95%E9%A2%98/" /><link rel="next" href="https://fioepq9.cn/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "计算机网络面试题",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/fioepq9.cn\/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98\/"
+        },"genre": "posts","wordcount":  697 ,
+        "url": "https:\/\/fioepq9.cn\/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98\/","datePublished": "2022-10-10T23:34:56+08:00","dateModified": "2022-10-10T23:34:56+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "fioepq9"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="fioepq9&#39;s blog">fioepq9&#39;s blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="fioepq9&#39;s blog">fioepq9&#39;s blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">计算机网络面试题</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>fioepq9</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-10-10">2022-10-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;697 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#http-是什么">HTTP 是什么？</a>
+      <ul>
+        <li><a href="#超文本的最关键点是什么">超文本的最关键点是什么？</a></li>
+        <li><a href="#http-的请求报文包含什么">HTTP 的请求报文包含什么？</a>
+          <ul>
+            <li><a href="#get-和-post-有什么区别">GET 和 POST 有什么区别？</a></li>
+          </ul>
+        </li>
+        <li><a href="#http-的响应报文包含什么">HTTP 的响应报文包含什么？</a>
+          <ul>
+            <li><a href="#http-常见的状态码有哪些">HTTP 常见的状态码有哪些？</a></li>
+          </ul>
+        </li>
+        <li><a href="#http-的报文首部和报文主体如何区别">HTTP 的报文首部和报文主体如何区别？</a></li>
+      </ul>
+    </li>
+    <li><a href="#http-缓存有哪些实现方式">HTTP 缓存有哪些实现方式？</a>
+      <ul>
+        <li><a href="#强制缓存">强制缓存</a></li>
+        <li><a href="#协商缓存">协商缓存</a></li>
+      </ul>
+    </li>
+    <li><a href="#http-有哪些优缺点">HTTP 有哪些优缺点？</a></li>
+    <li><a href="#从输入网址到获得页面的过程">从输入网址到获得页面的过程？</a></li>
+    <li><a href="#http-和-https-有哪些区别">HTTP 和 HTTPS 有哪些区别？</a></li>
+    <li><a href="#https-解决了-http-的哪些问题">HTTPS 解决了 HTTP 的哪些问题？</a>
+      <ul>
+        <li><a href="#混合加密是什么">混合加密是什么？</a></li>
+        <li><a href="#采用混合加密的原因">采用混合加密的原因？</a></li>
+        <li><a href="#摘要算法是如何验证数据的完整性的">摘要算法是如何验证数据的完整性的？</a></li>
+      </ul>
+    </li>
+    <li><a href="#ssltls-的握手过程">SSL/TLS 的握手过程？</a></li>
+    <li><a href="#dns-是什么">DNS 是什么？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#什么是三次握手">什么是三次握手？</a>
+      <ul>
+        <li><a href="#tcp-建立连接可以两次握手吗为什么">TCP 建立连接可以两次握手吗？为什么？</a></li>
+        <li><a href="#可以采用四次握手吗为什么">可以采用四次握手吗？为什么？</a></li>
+        <li><a href="#第三次握手中如果客户端的-ack-报文未送达服务端会怎么样">第三次握手中，如果客户端的 ACK 报文未送达服务端，会怎么样？</a></li>
+        <li><a href="#如果已经建立了连接但客户端出现了故障怎么办">如果已经建立了连接，但客户端出现了故障怎么办？</a></li>
+        <li><a href="#初始序列号是什么序列号的作用是什么">初始序列号是什么？(序列号的作用是什么？)</a></li>
+      </ul>
+    </li>
+    <li><a href="#什么是四次挥手">什么是四次挥手？</a>
+      <ul>
+        <li><a href="#为什么不能把服务端发送的-ack-和-fin-合并变成三次挥手close_wait-状态的意义是什么">为什么不能把服务端发送的 ACK 和 FIN 合并，变成三次挥手？（CLOSE_WAIT 状态的意义是什么？）</a></li>
+        <li><a href="#如果第二次挥手时服务器的-ack-没有送达客户端会怎么样">如果第二次挥手时服务器的 ACK 没有送达客户端，会怎么样？</a></li>
+        <li><a href="#客户端-time_wait-状态的意义是什么">客户端 TIME_WAIT 状态的意义是什么？</a></li>
+      </ul>
+    </li>
+    <li><a href="#tcp-的流量控制是如何实现的">TCP 的流量控制是如何实现的？</a>
+      <ul>
+        <li><a href="#什么是零窗口接收窗口为-0-时会怎么样">什么是零窗口？（接收窗口为 0 时会怎么样？）</a></li>
+      </ul>
+    </li>
+    <li><a href="#tcp-的拥塞控制是怎么实现的">TCP 的拥塞控制是怎么实现的？</a></li>
+    <li><a href="#tcp-如何保证可靠性">TCP 如何保证可靠性？</a></li>
+    <li><a href="#tcp-与-udp-的区别">TCP 与 UDP 的区别</a>
+      <ul>
+        <li><a href="#什么时候选择-tcp什么时候选择-udp">什么时候选择 TCP，什么时候选择 UDP？</a></li>
+        <li><a href="#http-可以使用-udp-吗">HTTP 可以使用 UDP 吗？</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#什么是-arp-协议">什么是 ARP 协议？</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="计算机网络体系结构">计算机网络体系结构</h1>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/01/20220401-200257.png"
+        data-srcset="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/01/20220401-200257.png, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/01/20220401-200257.png 1.5x, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/01/20220401-200257.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/04/01/20220401-200257.png"
+        title="计算机网络体系结构" /></p>
+<h1 id="应用层httphttpsdns">应用层：HTTP、HTTPS、DNS</h1>
+<h2 id="http-是什么">HTTP 是什么？</h2>
+<p>HTTP，即「超文本传输协议」，是一个在计算机世界里专门在两点之间传输文字、图片、音频、视频等超文本数据的约定和规范。</p>
+<h3 id="超文本的最关键点是什么">超文本的最关键点是什么？</h3>
+<p>最关键的是「超链接」，它能够从一个超文本跳转到另一个超文本。</p>
+<h3 id="http-的请求报文包含什么">HTTP 的请求报文包含什么？</h3>
+<p>请求报文是由请求方法、请求 URI、协议版本、可选的请求首部字段和内容实体构成的。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171734.png"
+        data-srcset="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171734.png, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171734.png 1.5x, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171734.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171734.png"
+        title="HTTP请求报文" /></p>
+<h4 id="get-和-post-有什么区别">GET 和 POST 有什么区别？</h4>
+<ul>
+<li>根据 RFC 规范，GET 的语义是从服务器获取指定的资源，POST 的语义是根据请求负荷对指定资源做出处理。</li>
+<li>GET 请求的参数一般写在 URL 中，由于 URL 规定只能支持 ASCII 字符，所以 GET 的参数也只允许 ASCII 字符，同时浏览器一般会对 URL 的长度有限制。POST 请求的参数一般写在报文的 body 中，body 中的数据可以是任意格式的，只要客户端与服务端协商好即可，而且浏览器不对 body 大小做限制。</li>
+<li>GET 方法是安全且幂等的，安全指的是不会修改服务器上的资源，幂等指的是多次执行相同的操作得到的结果也是相同的。POST 方法一般用于新增或提交数据，会修改服务器上的资源，所以是不安全的，且多次提交数据就会创建多个资源，所以不是幂等的。</li>
+<li>可以对 GET 请求的数据做缓存，而且在浏览器中 GET 请求可以保存为书签。浏览器一般不会缓存 POST 请求，也不能将 POST 请求保存为书签。</li>
+</ul>
+<h3 id="http-的响应报文包含什么">HTTP 的响应报文包含什么？</h3>
+<p>响应报文由协议版本、状态码、用以解释状态码的原因短语、可选的响应首部字段以及实体主体构成。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171946.png"
+        data-srcset="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171946.png, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171946.png 1.5x, https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171946.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/ltlin9/note-img/master/img/2022/03/26/20220326-171946.png"
+        title="HTTP响应报文" /></p>
+<h4 id="http-常见的状态码有哪些">HTTP 常见的状态码有哪些？</h4>
+<p><code>1xx</code>类状态码属于提示信息，是协议处理中的一种中间状态，实际使用较少。</p>
+<p><code>2xx</code>类状态码表示请求成功被处理。</p>
+<ul>
+<li>「200 OK」：表示一切正常。</li>
+<li>「204 No Content」：与 200 OK 基本相同，但返回的响应报文中没有 body。</li>
+<li>「206 Partial Content」：通常应用于 HTTP 分块下载或断点续传，表示响应返回的 body 数据是资源的一部分。</li>
+</ul>
+<p><code>3xx</code>类状态码表示请求的资源发生了变动，需要使用新的 URL 进行访问。</p>
+<ul>
+<li>「301 Moved Permanently」：表示永久重定向，如果保存原 URL 为书签了，这个时候应该修改。</li>
+<li>「302 Found」：表示临时重定向，这一次访问需要使用新的 URL。</li>
+<li>「304 Not Modified」：表示资源未修改，用于告知客户端可以继续使用缓存资源。</li>
+</ul>
+<p><code>4xx</code>类状态码表示请求报文有误，服务器无法处理。</p>
+<ul>
+<li>「400 Bad Request」：表示请求报文有误，是一个笼统的错误码。</li>
+<li>「403 Forbidden」：表示请求的资源被服务器禁止访问。</li>
+<li>「404 Not Found」：表示请求的资源在服务器上未找到。</li>
+</ul>
+<p><code>5xx</code>类状态码表示请求报文正确，但服务器内部处理时发生了错误。</p>
+<ul>
+<li>「500 Internal Server Error」：表示服务器内部处理发生了错误，是一个笼统的错误码。</li>
+<li>「501 Not Implemented」：表示客户端请求的功能还不支持，类似于“敬请期待”的意思。</li>
+<li>「502 Bad Gateway」：通常是服务器作为网关或代理时返回的错误码，表示服务器自身工作正常，访问上游服务器时收到了无效响应。</li>
+<li>「503 Service Unavailable」：表示因为临时的服务器维护或者过载，当前无法处理请求。</li>
+<li>「504 Gateway Timeout」：通常是服务器作为网关或代理时返回的错误码，表示服务器自身工作正常，但访问上游服务器时超时。</li>
+</ul>
+<h3 id="http-的报文首部和报文主体如何区别">HTTP 的报文首部和报文主体如何区别？</h3>
+<p>存在一个 CR+LF 组成的标准空行，进行分隔。</p>
+<h2 id="http-缓存有哪些实现方式">HTTP 缓存有哪些实现方式？</h2>
+<p>HTTP 缓存有两种实现方式，分别是「强制缓存」和「协商缓存」。</p>
+<h3 id="强制缓存">强制缓存</h3>
+<p>「强制缓存」指的是只要浏览器判断缓存没有过期，就直接使用浏览器的本地缓存，决定权在浏览器。「强制缓存」使用 HTTP 响应首部中的<code>Cache-Control</code>字段实现。</p>
+<p>当浏览器第一次访问服务器资源时，服务器会在返回资源的同时，在响应首部加上<code>Cache-Control</code>字段，这个字段中设置了缓存过期时间；当浏览器再次访问相同资源时，会先通过请求资源的时间与<code>Cache-Control</code>中设置的过期时间大小计算出缓存是否过期，过期才会重新请求服务器。</p>
+<h3 id="协商缓存">协商缓存</h3>
+<p>「协商缓存」就是浏览器与服务器进行协商，根据协商结果来判断是否使用本地缓存。只有在未命中「强制缓存」时，才能发起「协商缓存」请求。「协商缓存」可以基于两种首部实现。</p>
+<ul>
+<li>请求首部的<code>If-Modified-Since</code>字段和响应首部的<code>Last-Modified</code>字段，<code>Last-Modified</code>字段标记了资源的最后修改时间，当缓存过期需要再次向服务器发送请求时，在首部<code>If-Modified-Since</code>字段中携带<code>Last-Modified</code>字段的值，服务器收到后会与被请求资源的最后修改时间进行对比，如果资源修改过，就返回「200 OK」；如果资源无新修改，就返回「304 Not Modified」。</li>
+<li>请求首部的<code>If-None-Match</code>字段和响应首部的<code>ETag</code>字段，<code>ETag</code>字段是资源的唯一标识，当缓存过期需要再次向服务器发送请求时，在首部<code>If-None-Match</code>字段中携带<code>ETag</code>字段的值，服务器收到后会进行比对，如果资源修改过，就返回「200 OK」；如果资源无新修改，就返回「304 Not Modified」。</li>
+</ul>
+<h2 id="http-有哪些优缺点">HTTP 有哪些优缺点？</h2>
+<p>优点：</p>
+<ol>
+<li>「简单」：HTTP 基本的报文格式就是 header + body，头部信息也是简单的 key-value 对，易于理解，学习成本低。</li>
+<li>「灵活、易于扩展」：HTTP 协议中的各类请求方法、URI、状态码、首部字段没有被固定死，允许开发人员自定义和扩充。</li>
+<li>「应用广泛」：HTTP 的应用范围相当广泛，从 PC 端的浏览器到手机上的各种 APP，天然具有跨平台的优越性。</li>
+</ol>
+<p>双刃剑：</p>
+<ol>
+<li>「无状态」
+<ul>
+<li>好处：不需要额外的资源记录状态信息，减轻了服务器的负担，能够把更多的 CPU 和内存用来对外提供服务。</li>
+<li>坏处：进行有关联性的操作时非常麻烦，例如【登录-下单-结算-支付】。</li>
+<li>通常使用 Cookie 技术来解决无状态的弊端。</li>
+</ul>
+</li>
+<li>「明文传输」
+<ul>
+<li>好处：通过浏览器 F12 控制台或者使用抓包工具抓包可以肉眼查看，为调试工作带来了极大的便利性。</li>
+<li>坏处：信息容易被窃取，如果信息包含账号、密码等重要隐私，就容易泄漏。</li>
+</ul>
+</li>
+</ol>
+<p>缺点：「不安全」</p>
+<ul>
+<li>通信过程使用明文，内容可能会被窃听。</li>
+<li>不会验证通信方的身份，可能遭遇伪装。</li>
+<li>无法证明报文的完整性，报文可能遭到篡改。</li>
+</ul>
+<h2 id="从输入网址到获得页面的过程">从输入网址到获得页面的过程？</h2>
+<ol>
+<li>浏览器对 URL 进行解析，获取到使用的协议、域名、URI。</li>
+<li>浏览器根据 URL 解析后获得的信息生成 HTTP 请求信息。</li>
+<li>浏览器查询自身对域名的缓存，未命中就继续查询操作系统的缓存，如果还是未命中就查询 hosts 文件。最后如果没有查询到域名的对应 IP 地址，浏览器就会使用 DNS 协议进行域名解析。</li>
+</ol>
+<ul>
+<li>域名解析过程：
+<ol>
+<li>客户端首先向本地 DNS 服务器（在 TCP/IP 设置中填写的 DNS 服务器地址）发出一个 DNS 请求。</li>
+<li>本地域名服务器收到请求后：如果缓存里能找到映射关系，就直接返回；如果没有，本地域名服务器会去询问根域名服务器。</li>
+<li>根域名服务器收到请求后，返回域名对应的顶级域名服务器地址。</li>
+<li>本地域名服务器收到顶级域名服务器地址后，会去询问顶级域名服务器。</li>
+<li>顶级域名服务器收到请求后，返回域名对应的权威名称服务器地址。</li>
+<li>本地域名服务器收到权威名称服务器地址后，会去询问权威名称服务器。</li>
+<li>权威名称服务器收到请求后，就会返回域名对应的 IP 地址。</li>
+<li>本地域名服务器收到 IP 地址后，将它进行缓存，然后返回给客户端。</li>
+</ol>
+</li>
+</ul>
+<ol start="4">
+<li>浏览器获取到域名对应的 IP 地址后，首先要跟服务器请求建立 TCP 连接，也就是进行 TCP 三次握手。三次握手的目的是保证双方都有发送和接收的能力。</li>
+<li>TCP 连接建立完成后，浏览器就会向服务器发送 HTTP 请求。</li>
+<li>服务器接收到请求后，将浏览器请求的资源返回给浏览器。</li>
+<li>最后浏览器根据请求获取到的资源、数据渲染页面。</li>
+</ol>
+<h2 id="http-和-https-有哪些区别">HTTP 和 HTTPS 有哪些区别？</h2>
+<ul>
+<li>HTTP 传输数据是明文传输的，存在安全方面的问题。HTTPS 在 TCP 和 HTTP 之间加入了 SSL/TLS 安全协议，添加了加密机制。</li>
+<li>HTTP 只需要进行 TCP 三次握手后就可以开始传输数据；HTTPS 在 TCP 三次握手后，还需要进行 SSL/TLS 的握手过程，才可以进行数据的传输。</li>
+<li>HTTP 的知名端口号是 80，HTTPS 的知名端口是 443。</li>
+<li>HTTPS 需要向 CA（证书权威机构）购买数字证书，用于保证服务器的身份可信。</li>
+</ul>
+<h2 id="https-解决了-http-的哪些问题">HTTPS 解决了 HTTP 的哪些问题？</h2>
+<ol>
+<li>HTTPS 通过「混合加密」的方式实现了信息的机密性，解决了窃听的风险。</li>
+<li>HTTPS 通过「摘要算法」的方式实现了信息的完整性，它为数据生成了独一无二的指纹，解决了信息被篡改的风险。</li>
+<li>HTTPS 将服务器公钥放入到数字证书中，由 CA 机构颁发的数字证书保证服务器公钥的可靠性，解决了冒充的风险。</li>
+</ol>
+<h3 id="混合加密是什么">混合加密是什么？</h3>
+<p>HTTPS 采用的是「对称加密」和「非对称加密」相结合的「混合加密」方式：</p>
+<ul>
+<li>在通信建立前采用非对称加密的方式交互「对称密钥」，后续不再使用非对称加密。</li>
+<li>在通信过程中全程使用对称加密的「对称密钥」对数据进行加密。</li>
+</ul>
+<h3 id="采用混合加密的原因">采用混合加密的原因？</h3>
+<ul>
+<li>「对称加密」只使用一个密钥，运算速度快，但密钥必须保密，无法做到安全的密钥交换。</li>
+<li>「非对称加密」使用公钥和私钥组成的密钥对，公钥可以任意分发而私钥需要保密，解决了密钥交换问题，但加密解密的开销比较大。</li>
+</ul>
+<h3 id="摘要算法是如何验证数据的完整性的">摘要算法是如何验证数据的完整性的？</h3>
+<p>客户端在发送数据前，会使用「摘要算法」计算出数据明文的指纹，然后将「数据明文+指纹」一同加密发送给服务器。服务器解密后，使用相同的「摘要算法」计算出数据明文的指纹，通过比对指纹，验证数据的完整性。</p>
+<h2 id="ssltls-的握手过程">SSL/TLS 的握手过程？</h2>
+<ol>
+<li>Client Hello</li>
+</ol>
+<p>首先，由客户端向服务器发起加密通信请求，即<code>Client Hello</code>请求。</p>
+<p>在这一步中，客户端主要向服务器发送以下信息：</p>
+<ul>
+<li>客户端支持的 SSL/TLS 协议版本。</li>
+<li>客户端生成的随机数<code>Client Random</code>。</li>
+<li>客户端支持的密码套件列表。</li>
+</ul>
+<ol start="2">
+<li>Server Hello</li>
+</ol>
+<p>服务器收到客户端的请求后，向客户端发出响应，即<code>Server Hello</code>。</p>
+<p>服务器响应的内容如下：</p>
+<ul>
+<li>服务器确认使用的 SSL/TLS 协议版本、服务器生成的随机数<code>Server Random</code>、服务器确认使用的密码套件列表。</li>
+<li>服务器的 CA 数字证书，里面包含服务器公钥。</li>
+</ul>
+<ol start="3">
+<li>客户端回应</li>
+</ol>
+<p>客户端收到服务器的回应后，首先通过内嵌在浏览器或者操作系统中的 CA 公钥，确认服务器数字证书的真实性。</p>
+<p>如果证书没有问题，客户端会从数字证书中取出服务器公钥，然后使用它加密报文，向服务器发送以下信息：</p>
+<ul>
+<li>发送一个随机数<code>pre-master key</code>。</li>
+<li>加密通信算法改变通知，表示随后的信息使用「会话密钥」进行加密。</li>
+<li>客户端握手结束通知，表示客户端的握手阶段已经结束。同时把之前所有信息根据「摘要算法」生成指纹发送给服务器进行校验。</li>
+</ul>
+<p>客户端发送完信息后，会使用<code>Client Random</code>、<code>Server Random</code>、<code>pre-master key</code>三个随机数根据协商的加密算法生成本次通信的「会话密钥」。</p>
+<ol start="4">
+<li>服务器回应</li>
+</ol>
+<p>服务器收到报文后，使用私钥进行解密，然后根据摘要指纹验证握手信息，验证完毕后，使用<code>Client Random</code>、<code>Server Random</code>、<code>pre-master key</code>三个随机数根据协商的加密算法生成本次通信的「会话密钥」。然后，向客户端发送最后的握手信息：</p>
+<ul>
+<li>加密通信算法改变通知，表示随后的信息使用「会话密钥」进行加密。</li>
+<li>服务器握手结束通知，表示服务器的握手阶段已经结束。同时把之前所有信息根据「摘要算法」生成指纹发送给客户端进行校验。</li>
+</ul>
+<h2 id="dns-是什么">DNS 是什么？</h2>
+<p>「DNS」是因特网上作为<strong>域名和 IP 地址相互映射</strong>的一个<strong>分布式数据库</strong>，它属于应用层协议，使用 UDP 进行传输。</p>
+<h1 id="传输层tcp-和-udp">传输层：TCP 和 UDP</h1>
+<h2 id="什么是三次握手">什么是三次握手？</h2>
+<ol>
+<li>第一次握手：客户端发送一个 SYN 置位，序列号为随机生成的客户端初始序列号的报文给服务端，随后客户端进入 SYN_SENT 状态。</li>
+<li>第二次握手：服务端收到客户端的 SYN 报文后，根据 SYN 置位可知客户端在请求建立连接。然后服务端发送一个 ACK 置位，SYN 置位，确认号为客户端初始序列号+1，序列号为随机生成的服务端初始序列号的报文给客户端。随后服务端进入 SYN_RCVD 状态。</li>
+<li>第三次握手：客户端检查收到的报文 ACK 是否置位，确认号是否为客户端初始序列号+1。客户端根据报文的 SYN 标志位被置位可知服务端同意建立连接，检查正确后，发送一个 ACK 置位，确认号为服务端初始序列号+1 的报文给服务端，随后客户端进入 ESTABLISHED 状态。服务端收到报文后检查 ACK 是否置位，确认号是否为服务端初始序列号+1，检查正确后服务端也进入 ESTABLISHED 状态。</li>
+</ol>
+<h3 id="tcp-建立连接可以两次握手吗为什么">TCP 建立连接可以两次握手吗？为什么？</h3>
+<p>不可以，有两个原因。</p>
+<ol>
+<li>第一个，是当一个因超时等原因已经失效的连接请求报文段传送到了 Server。本来这是已失效的报文段，但 Server 会认为这是 Client 再次发出的新的连接请求，于是就向 Client 发出 ACK 报文段同意请求。由于是两次握手，新的连接在服务端看来已经建立了，Server 会一直维持连接等待 Client 发送数据，白白浪费资源。</li>
+<li>第二个是，只有两次握手的话，Server 无法确认 Client 正确接收到了第二次握手的报文，也就无法保证 Client 和 Server 之间成功交换了初始序列号。</li>
+</ol>
+<h3 id="可以采用四次握手吗为什么">可以采用四次握手吗？为什么？</h3>
+<p>可以。但是会降低传输效率。</p>
+<ul>
+<li>四次握手是指：将第二次握手的报文段拆分成 ACK 报文和 SYN 报文。出于优化的目的，这是可以合并的。</li>
+</ul>
+<h3 id="第三次握手中如果客户端的-ack-报文未送达服务端会怎么样">第三次握手中，如果客户端的 ACK 报文未送达服务端，会怎么样？</h3>
+<ul>
+<li>Server：由于 Server 没有收到 ACK 确认报文，因此会重发之前 SYN+ACK 报文（默认重发 5 次，之后自动关闭连接，进入 CLOSED 状态），Client 收到 SYN+ACK 报文后会重发 ACK 报文。</li>
+<li>Client 端有两种情况。
+<ul>
+<li>一种是 Server 超时重发过程中，Client 端向服务端发送了包含 ACK 标志位的数据报文，服务端读取确认号后，根据确认号大于服务端初始序列号+1，可以进入 ESTABLISHED 状态。</li>
+<li>另一种情况是，Server 已经进入 CLOSED 状态了，Client 向服务端发送数据，服务端会以 RST 包应答。</li>
+</ul>
+</li>
+</ul>
+<h3 id="如果已经建立了连接但客户端出现了故障怎么办">如果已经建立了连接，但客户端出现了故障怎么办？</h3>
+<p>服务端每收到一次客户端的请求后都会重新复位一个计时器，时间通常是设置为 2 小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔 75 秒钟发送一次。若一连发送 10 个探测报文仍然没反应，服务器就认为客户端出了故障，接着就关闭连接。</p>
+<h3 id="初始序列号是什么序列号的作用是什么">初始序列号是什么？(序列号的作用是什么？)</h3>
+<p>TCP 是一种全双工的连接，它在两个方向都有一个初始序列号。在同一个方向上，发送端会以初始序列号作为原点，对要传输的数据进行编号。接收端通过序列号可以确认数据是否合法，同时发送端根据接收端发送的 ACK 报文中的确认号可以确认哪些数据已被接收。</p>
+<h2 id="什么是四次挥手">什么是四次挥手？</h2>
+<ol>
+<li>第一次挥手：Client 发送一个 FIN 置位，并有相应序列号的报文给 Server，随后进入 FIN_WAIT_1 状态。此时，Client 不再发送数据，但仍可以接收数据。</li>
+<li>第二次挥手：Server 收到 FIN 后，发送一个 ACK 置位，确认号为收到序列号+1 的报文，进入 CLOSE_WAIT 状态。Client 接收到 ACK 报文后，进入 FIN_WAIT_2 状态。</li>
+<li>第三次挥手：Server 发送一个 FIN 置位，并填写了对应序列号的报文给 Client，随后进入 LAST_ACK 状态。</li>
+<li>第四次挥手：Client 收到服务器的 FIN 报文后，进入 TIME_WAIT 状态；接着发送一个 ACK 置位，确认号为三次挥手的序列号+1 的报文给 Server；Server 接收到后，确认 ACK 标志位和确认号后，进入 CLOSED 状态。客户端等待 2*MSL（报文段最长寿命）时间后，也进入 CLOSED 状态。</li>
+</ol>
+<h3 id="为什么不能把服务端发送的-ack-和-fin-合并变成三次挥手close_wait-状态的意义是什么">为什么不能把服务端发送的 ACK 和 FIN 合并，变成三次挥手？（CLOSE_WAIT 状态的意义是什么？）</h3>
+<p>因为服务器收到客户端断开连接的请求时，可能还有一些数据没有发完，这时先回复 ACK，表示接收到了断开连接的请求。等到数据发完之后再发 FIN，断开服务器到客户端的数据传送。</p>
+<h3 id="如果第二次挥手时服务器的-ack-没有送达客户端会怎么样">如果第二次挥手时服务器的 ACK 没有送达客户端，会怎么样？</h3>
+<p>客户端没有收到 ACK 确认，会重新发送 FIN 请求。</p>
+<h3 id="客户端-time_wait-状态的意义是什么">客户端 TIME_WAIT 状态的意义是什么？</h3>
+<p>第四次挥手时，客户端发送给服务器的 ACK 有可能丢失，TIME_WAIT 状态就是用来重发可能丢失的 ACK 报文。如果 Server 没有收到 ACK，就会重发 FIN，如果 Client 在 2<em>MSL 的时间内收到了 FIN，就会重新发送 ACK 并再次等待 2</em>MSL，防止 Server 没有收到 ACK 而不断重发 FIN。</p>
+<h2 id="tcp-的流量控制是如何实现的">TCP 的流量控制是如何实现的？</h2>
+<p>TCP 是使用滑动窗口协议实现流量控制的。</p>
+<p>接收端会维护一个接收窗口，根据自身剩余缓冲区大小动态调整，在返回 ACK 报文时将接收窗口大小放在 TCP 报文首部的窗口字段中告知发送端。发送窗口的大小不能超过接收窗口的大小，只有当发送端发送的数据收到确认后，才能右移发送窗口。</p>
+<p>发送窗口的上限为接收窗口和拥塞窗口中的较小值。接收窗口表明了接收方的接收能力，拥塞窗口表明了网络的传送能力。</p>
+<h3 id="什么是零窗口接收窗口为-0-时会怎么样">什么是零窗口？（接收窗口为 0 时会怎么样？）</h3>
+<p>如果接收方没有能力接收数据，就会将接收窗口设置为 0，这时发送方必须暂停发送数据，但是会启动一个持续计时器(persistence timer)，到期后发送一个大小为 1 字节的探测数据包，以查看接收窗口状态。如果接收方能够接收数据，就会在返回的报文中更新接收窗口大小，恢复数据传送。</p>
+<h2 id="tcp-的拥塞控制是怎么实现的">TCP 的拥塞控制是怎么实现的？</h2>
+<p>拥塞控制主要由四个算法组成：慢启动、拥塞避免、快速重传、快速恢复。</p>
+<ul>
+<li>慢启动：</li>
+</ul>
+<p>在刚建立 TCP 连接或者出现丢包的时候，发送端处于慢启动状态，这个时候会把拥塞窗口设置为 1 个 MSS。每接收到一个 ACK 报文，就增加 1 个 MSS。这样每经过一个 RTT，拥塞窗口的大小就会加倍。</p>
+<ul>
+<li>拥塞避免：</li>
+</ul>
+<p>当拥塞窗口的大小达到慢启动阈值（ssthresh）时，开始执行拥塞避免算法。每经过 1 个 RTT，拥塞窗口大小不再指数增长，而是线性增长。</p>
+<ul>
+<li>快速重传：</li>
+</ul>
+<p>接收方在收到一个失序的报文段后就立即发出重复确认（为的是使发送方及早知道有报文段没有到达对方）而不是等到自己发送数据时捎带确认。</p>
+<p>发送方只要一连收到三个重复确认就立即重传对方尚未收到的报文段，而不必继续等待设置的重传计时器时间到期。</p>
+<ul>
+<li>快速恢复：</li>
+</ul>
+<p>当发送方连续收到三个重复确认时，就把慢启动阈值减半，同时将拥塞窗口的大小置为慢启动阈值的大小，然后执行拥塞避免算法。</p>
+<p>不执行慢开始算法的原因是：因为如果网络出现拥塞的话就不会收到好几个重复的确认，所以发送方认为现在网络可能没有出现拥塞。</p>
+<h2 id="tcp-如何保证可靠性">TCP 如何保证可靠性？</h2>
+<ol>
+<li>TCP 首部的校验和</li>
+<li>应答机制：接收端收到数据之后会根据序列号，会发送一个 ACK 确认报文。</li>
+<li>超时重发机制：发送端发出数据后，会启动一个定时器，超时未收到 ACK 报文，就会重发。</li>
+<li>流量控制：确保接收端能完整接收发送端的数据而不会缓冲区溢出。</li>
+<li>拥塞控制：当网络拥塞时，通过拥塞控制减少数据的发送，防止包丢失。</li>
+</ol>
+<h2 id="tcp-与-udp-的区别">TCP 与 UDP 的区别</h2>
+<ol>
+<li>
+<p>连接
+TCP 是面向连接的传输层协议，传输数据前要先建立连接。
+UDP 是无连接的，直接就可以传输数据。</p>
+</li>
+<li>
+<p>服务对象
+TCP 是一对一的两点服务，即一条连接只有两个端点。
+UDP 支持一对一、一对多、多对一、多对多的交互通信。</p>
+</li>
+<li>
+<p>可靠性
+TCP 是可靠交付数据的，数据可以无差错、不丢失、不重复、按需到达。
+UDP 是尽最大努力交付数据，不保证可靠性。</p>
+</li>
+<li>
+<p>拥塞控制、流量控制
+TCP 有拥塞控制和流量控制机制，保证数据传输的安全性。
+UDP 则没有，即使网络非常拥堵，也不会影响 UDP 的发送速率。</p>
+</li>
+<li>
+<p>首部开销
+TCP 的首部较长，最小是 20 个字节，如果使用了额外的选项，还会进一步增长。
+UDP 的首部只有 8 个字节，并且是固定不变的，开销较小。</p>
+</li>
+<li>
+<p>传输方式
+TCP 是流式传输，没有边界，但保证顺序和可靠性。
+UDP 是一个包一个包的发送，是有边界的，但可能会丢包和乱序。</p>
+</li>
+<li>
+<p>分片方式
+TCP 的数据大小如果大于 MSS，则会在传输层进行分片，如果传输过程中丢失了一个分片，只需要重传这个丢失的分片。
+UDP 的数据大小如果大于 MTU，则会在 IP 层进行分片。</p>
+</li>
+</ol>
+<h3 id="什么时候选择-tcp什么时候选择-udp">什么时候选择 TCP，什么时候选择 UDP？</h3>
+<p>对某些实时性要求比较高的情况，选择 UDP，比如游戏，媒体通信，实时视频流（直播），即使出现传输错误也可以容忍；其它大部分情况下使用 TCP，因为要求传输的内容可靠，不出现丢失。</p>
+<h3 id="http-可以使用-udp-吗">HTTP 可以使用 UDP 吗？</h3>
+<p>可以，HTTP/3 就是使用基于 UDP 的 QUIC 协议。</p>
+<h1 id="网络层ip-和-arp">网络层：IP 和 ARP</h1>
+<h2 id="什么是-arp-协议">什么是 ARP 协议？</h2>
+<p><strong>ARP 协议完成了 IP 地址与物理地址的映射</strong>。每一个主机都设有一个 <strong>ARP 高速缓存</strong>，里面有<strong>所在的局域网</strong>上的各主机和路由器的 IP 地址到硬件地址的映射表。当源主机要发送数据包到目的主机时，会先检查自己的 ARP 高速缓存中有没有目的主机的 MAC 地址，如果有，就直接将数据包发到这个 MAC 地址，如果没有，就向<strong>所在的局域网</strong>发起一个 ARP 请求的广播包（在发送自己的 ARP 请求时，同时会带上自己的 IP 地址到硬件地址的映射），收到请求的主机检查自己的 IP 地址和目的主机的 IP 地址是否一致，如果一致，则先保存源主机的映射到自己的 ARP 缓存，然后给源主机发送一个 ARP 响应数据包。源主机收到响应数据包之后，先添加目的主机的 IP 地址与 MAC 地址的映射，再进行数据传送。如果源主机一直没有收到响应，表示 ARP 查询失败。</p>
+<p>如果所要找的主机和源主机不在同一个局域网上，那么就要通过 ARP 找到一个位于本局域网上的某个路由器的硬件地址，然后把分组发送给这个路由器，让这个路由器把分组转发给下一个网络。剩下的工作就由下一个网络来做。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-10-10</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://fioepq9.cn/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="计算机网络面试题"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://fioepq9.cn/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://fioepq9.cn/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="计算机网络面试题"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://fioepq9.cn/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="计算机网络面试题"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://fioepq9.cn/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" data-title="计算机网络面试题"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E9%9D%A2%E8%AF%95%E9%A2%98/" class="prev" rel="prev" title="数据结构与算法面试题"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>数据结构与算法面试题</a>
+            <a href="/golang%E9%9D%A2%E8%AF%95%E9%A2%98/" class="next" rel="next" title="Golang面试题">Golang面试题<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">fioepq9</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>粤ICP备2022045198号</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
